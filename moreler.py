@@ -17,7 +17,7 @@ class MoreleStripper(object):
             pricetag = link.find("div", class_="price-new")
             url = "https://www.morele.net" + a['href']
             title = a['title']
-            price = float(pricetag.string.strip().replace(" ", "").replace(u"zł", ""))
+            price = float(pricetag.string.strip().replace(" ", "").replace(",", ".").replace(u"zł", ""))
 
             prod = Product(uid, url, title, price, "Morele")
             prods.append(prod)

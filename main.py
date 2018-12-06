@@ -42,6 +42,7 @@ sms_count = 0
 def send_sms(msg):
     global sms_count
     global settings
+    print(msg)
     if should_send_sms() and sms_count < settings.max_sms_once:
         sms.send(os.environ['SRC_PHONE_NUMBER'], os.environ['PHONE_NUMBER'], msg)
         sms_count += 1
@@ -50,20 +51,31 @@ prods = moreler.fetch_products(settings.search_tag, requester)
 prods += xkomer.fetch_products(settings.search_tag, requester)
 prods += komp.fetch_products(settings.search_tag, requester)
 
-old_prods = database.products()
+old_prods : List[Product] = database.products()
+
+tags = settings.search_tag.lower().split(' ')
 
 for prod in prods:
-    oldProd : Optional[Product] = database.product(prod.Id)
-    if oldProd is None:
-        if prod.Price >= settings.min_price and prod.Price <= settings.max_price:
-            database.add_product(prod)
-            if prod.Price <= settings.notify_below:
-                send_sms("NOWY! " + prod.Name + " za " + str(prod.Price) + "zl na " + prod.Source)
-    else:
-        if oldProd.Price > prod.Price:
-            discount : float = (oldProd.Price - prod.Price) / oldProd.Price * 100
 
-            if prod.Price <= settings.notify_below or discount >= settings.discount_to_notify:
-                send_sms("TANIEJ o " + str(int(discount)) + "%: " + prod.Name + " za " + str(prod.Price) + "(" + str(oldProd.Price) + ") na " + prod.Source)
-            
-            database.add_product(prod)
+    all=True
+    for tag in tags:
+        if not tag in prod.Name.lower():
+            all=False
+    
+    if not all:
+        print("Not all tags in " + prod.Name+ ". Ignoring")
+    else:
+        oldProd : Optional[Product] = database.product(prod.Id)
+        if oldProd is None:
+            if prod.Price >= settings.min_price and prod.Price <= settings.max_price:
+                database.add_product(prod)
+                if prod.Price <= settings.notify_below:
+                    send_sms("NOWY! " + prod.Name + " za " + str(prod.Price) + "zl na " + prod.Source)
+        else:
+            if oldProd.Price > prod.Price:
+                discount : float = (oldProd.Price - prod.Price) / oldProd.Price * 100
+
+                if prod.Price <= settings.notify_below or discount >= settings.discount_to_notify:
+                    send_sms("TANIEJ o " + str(int(discount)) + "%: " + prod.Name + " za " + str(prod.Price) + "(" + str(oldProd.Price) + ") na " + prod.Source)
+                
+                database.add_product(prod)
