@@ -43,7 +43,6 @@ sms_count = 0
 def send_sms(msg):
     global sms_count
     global settings
-    print(msg)
     if should_send_sms() and sms_count < settings.max_sms_once:
         sms.send(os.environ['SRC_PHONE_NUMBER'], os.environ['PHONE_NUMBER'], msg)
         sms_count += 1
@@ -70,14 +69,18 @@ for prod in prods:
         if oldProd is None:
             if prod.Price >= settings.min_price and prod.Price <= settings.max_price:
                 database.add_product(prod, int(time.time()))
+                msg = "NOWY! " + prod.Name + " za " + str(prod.Price) + "zl na " + prod.Source
                 if prod.Price <= settings.notify_below:
-                    send_sms("NOWY! " + prod.Name + " za " + str(prod.Price) + "zl na " + prod.Source)
+                    send_sms(msg)
+                print(msg)
         else:
             if oldProd.Price > prod.Price:
                 discount : float = (oldProd.Price - prod.Price) / oldProd.Price * 100
 
+                msg = "TANIEJ o " + str(int(discount)) + "%: " + prod.Name + " za " + str(prod.Price) + "(" + str(oldProd.Price) + ") na " + prod.Source"
                 if prod.Price <= settings.notify_below or discount >= settings.discount_to_notify:
-                    send_sms("TANIEJ o " + str(int(discount)) + "%: " + prod.Name + " za " + str(prod.Price) + "(" + str(oldProd.Price) + ") na " + prod.Source)
+                    send_sms(msg)
+                print(msg)
                 
                 database.add_price(prod, int(time.time()))
             elif oldProd.Price < prod.Price:
