@@ -77,7 +77,7 @@ for prod in prods:
             if oldProd.Price > prod.Price:
                 discount : float = (oldProd.Price - prod.Price) / oldProd.Price * 100
 
-                msg = "TANIEJ o " + str(int(discount)) + "%: " + prod.Name + " za " + str(prod.Price) + "(" + str(oldProd.Price) + ") na " + prod.Source"
+                msg = "TANIEJ o " + str(int(discount)) + "%: " + prod.Name + " za " + str(prod.Price) + "(" + str(oldProd.Price) + ") na " + prod.Source
                 if prod.Price <= settings.notify_below or discount >= settings.discount_to_notify:
                     send_sms(msg)
                 print(msg)
