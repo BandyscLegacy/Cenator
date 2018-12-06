@@ -6,7 +6,7 @@ from product import Product
 class KomputronikStripper(object):
 
     def fetch_products(self, search_text : str, req : HtmlRequest) -> List[Product]:
-        html_doc = req.request("https://www.komputronik.pl/search/category/1099?query=" + search_text)
+        html_doc = req.request("https://www.komputronik.pl/search/category/1?query=" + search_text)
         soup = BeautifulSoup(html_doc, 'html.parser')
 
         prods : List[Product] = []

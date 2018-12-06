@@ -6,7 +6,7 @@ from product import Product
 class XKomStripper(object):
 
     def fetch_products(self, search_text : str, req : HtmlRequest) -> List[Product]:
-        html_doc = req.request("https://www.x-kom.pl/szukaj?q=" + search_text + "&per_page=90&f[groups][5]=1&f[categories][346]=1")
+        html_doc = req.request("https://www.x-kom.pl/szukaj?q=" + search_text + "&per_page=90&f[groups][5]=1")
         soup = BeautifulSoup(html_doc, 'html.parser')
 
         prods : List[Product] = []

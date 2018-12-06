@@ -22,24 +22,29 @@ settings = Settings()
 def should_send_sms():
     return len(sys.argv) > 1 and sys.argv[1] == "sms"
 
-if not 'SMS_SECRET' in os.environ:
-    print("No SMS_SECRET for Twilio in environment variables")
-    exit(0)
-if not 'SMS_AUTH' in os.environ:
-    print("No SMS_SECRET for Twilio in environment variables")
-    exit(0)
-if not 'PHONE_NUMBER' in os.environ:
-    print("No PHONE_NUMBER for Twilio in environment variables")
-    exit(0)
-if not 'SRC_PHONE_NUMBER' in os.environ:
-    print("No SRC_PHONE_NUMBER for Twilio in environment variables")
-    exit(0)
+if should_send_sms():
+    if not 'SMS_SECRET' in os.environ:
+        print("No SMS_SECRET for Twilio in environment variables")
+        exit(0)
+    if not 'SMS_AUTH' in os.environ:
+        print("No SMS_SECRET for Twilio in environment variables")
+        exit(0)
+    if not 'PHONE_NUMBER' in os.environ:
+        print("No PHONE_NUMBER for Twilio in environment variables")
+        exit(0)
+    if not 'SRC_PHONE_NUMBER' in os.environ:
+        print("No SRC_PHONE_NUMBER for Twilio in environment variables")
+        exit(0)
 
-sms = SMS(os.environ['SMS_SECRET'], os.environ['SMS_AUTH'])
+    sms = SMS(os.environ['SMS_SECRET'], os.environ['SMS_AUTH'])
 
+sms_count = 0
 def send_sms(msg):
-    if should_send_sms():
+    global sms_count
+    global settings
+    if should_send_sms() and sms_count < settings.max_sms_once:
         sms.send(os.environ['SRC_PHONE_NUMBER'], os.environ['PHONE_NUMBER'], msg)
+        sms_count += 1
 
 prods = moreler.fetch_products(settings.search_tag, requester)
 prods += xkomer.fetch_products(settings.search_tag, requester)

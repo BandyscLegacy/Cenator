@@ -6,7 +6,7 @@ from product import Product
 class MoreleStripper(object):
 
     def fetch_products(self, search_text : str, req : HtmlRequest) -> List[Product]:
-        html_doc = req.request("https://www.morele.net/komputery/podzespoly-komputerowe/karty-graficzne-12/?q=" + search_text)
+        html_doc = req.request("https://www.morele.net/wyszukiwarka/0/0/,,,,,,,,,,,,/1/?q=" + search_text)
         soup = BeautifulSoup(html_doc, 'html.parser')
 
         prods : List[Product] = []
@@ -21,5 +21,22 @@ class MoreleStripper(object):
 
             prod = Product(uid, url, title, price, "Morele")
             prods.append(prod)
+
+        if len(prods) == 0:
+            el = soup.find("section", class_="product-grid")
+            if el != None:
+                linkTag = el.find("div", class_="fb-like")
+                titleTag = el.find("h1", class_="prod-name")
+                uidTag = el
+                priceTag = el.find("div", id="product_price_brutto")
+
+                uid = uidTag["data-product-id"]
+                url = "https://www.morele.net" + linkTag['data-href']
+                title = titleTag.string.strip()
+                price = float(priceTag['content'])
+
+                prod = Product(uid, url, title, price, "Morele")
+                prods.append(prod)
+
 
         return prods

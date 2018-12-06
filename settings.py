@@ -12,10 +12,11 @@ class Settings(object):
             self.data = json.load(open("../settings.json"))
 
         self.__ensure("tag", "2080 ti")
-        self.__ensure("min_price", "3000")
-        self.__ensure("max_price", "7000")
-        self.__ensure("discount_to_notify", "12")
-        self.__ensure("notify_below", "5100")
+        self.__ensure("min_price", 3000)
+        self.__ensure("max_price", 7000)
+        self.__ensure("discount_to_notify", 12)
+        self.__ensure("notify_below", 5100)
+        self.__ensure("max_sms_once", 3)
 
         if self.__failed:
             print("Some settings in ../settings.json are not filled. Fix to use this app")
@@ -46,3 +47,8 @@ class Settings(object):
     @property
     def notify_below(self):
         return self.data['notify_below']
+        
+    @property
+    def max_sms_once(self):
+        return self.data['max_sms_once']
+        
