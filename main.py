@@ -9,6 +9,7 @@ from product import Product
 from settings import Settings
 import os
 import sys
+import time
 
 requester = HtmlRequest()
 moreler = MoreleStripper()
@@ -68,7 +69,7 @@ for prod in prods:
         oldProd : Optional[Product] = database.product(prod.Id)
         if oldProd is None:
             if prod.Price >= settings.min_price and prod.Price <= settings.max_price:
-                database.add_product(prod)
+                database.add_product(prod, int(time.time()))
                 if prod.Price <= settings.notify_below:
                     send_sms("NOWY! " + prod.Name + " za " + str(prod.Price) + "zl na " + prod.Source)
         else:
@@ -78,4 +79,6 @@ for prod in prods:
                 if prod.Price <= settings.notify_below or discount >= settings.discount_to_notify:
                     send_sms("TANIEJ o " + str(int(discount)) + "%: " + prod.Name + " za " + str(prod.Price) + "(" + str(oldProd.Price) + ") na " + prod.Source)
                 
-                database.add_product(prod)
+                database.add_price(prod, int(time.time()))
+            elif oldProd.Price < prod.Price:
+                database.add_price(prod, int(time.time()))

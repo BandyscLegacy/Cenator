@@ -40,14 +40,20 @@ class Database(object):
     def products(self) -> Dict[str, Product]:
         return dict(self.__products())
 
+    def add_price(self, prod : Product, timestamp: int):
+        self.__products()[prod.Id].Price = prod.Price
+        self.__products()[prod.Id].History.append({"time": timestamp, "price": prod.Price})
+        self.save()
+
     def __products(self) -> Dict[str, Product]:
         return self.data['products']
 
-    def add_product(self, product : Product):
+    def add_product(self, product : Product, timestamp: int):
         if not 'products' in self.data:
             self.data['products'] = {}
         
         self.data['products'][product.Id] = product
+        self.data['products'][product.Id].History.append({"time": timestamp, "price": product.Price})
 
         self.save()
 
