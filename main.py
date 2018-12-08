@@ -10,18 +10,29 @@ from settings import Settings
 import os
 import sys
 import time
+import argparse
 
 requester = HtmlRequest()
 moreler = MoreleStripper()
 xkomer = XKomStripper()
 komp = KomputronikStripper()
 
-database = Database()
 
-settings = Settings()
+parser = argparse.ArgumentParser(description='Read prices from xkom, morele, komputronik!')
+parser.add_argument('-d', '--database', dest='database_path', action='store', default="database.json")
+parser.add_argument('-s', '--settings', dest='settings_path', action='store', default="settings.json")
+parser.add_argument('--sms', dest='sms', action='store_true', default=False)
+parser.add_argument('-v', dest='verbose', action='store_true', default=False)
+
+args = parser.parse_args()
+
+database = Database(args.database_path)
+
+settings = Settings(args.settings_path)
 
 def should_send_sms():
-    return len(sys.argv) > 1 and sys.argv[1] == "sms"
+    global args
+    return args.sms
 
 if should_send_sms():
     if not 'SMS_SECRET' in os.environ:
@@ -63,7 +74,8 @@ for prod in prods:
             all=False
     
     if not all:
-        print("Not all tags in " + prod.Name+ ". Ignoring")
+        if args.verbose:
+            print("Not all tags in " + prod.Name+ ". Ignoring")
     else:
         oldProd : Optional[Product] = database.product(prod.Id)
         if oldProd is None:

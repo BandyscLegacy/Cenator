@@ -3,13 +3,13 @@ import os
 
 class Settings(object):
 
-    def __init__(self):
+    def __init__(self, settings_path):
         self.__failed = False
-        if not os.path.exists('../settings.json'):
+        if not os.path.exists(settings_path):
             self.data = {}
             self.__failed = True
         else:
-            self.data = json.load(open("../settings.json"))
+            self.data = json.load(open(settings_path))
 
         self.__ensure("tag", "2080 ti")
         self.__ensure("min_price", 3000)
@@ -19,8 +19,8 @@ class Settings(object):
         self.__ensure("max_sms_once", 3)
 
         if self.__failed:
-            print("Some settings in ../settings.json are not filled. Fix to use this app")
-            json.dump(self.data, open("../settings.json", "w"), indent=4)
+            print("Some settings in " + settings_path + " are not filled. Fix to use this app")
+            json.dump(self.data, open(settings_path, "w"), indent=4)
             exit(0)
 
     def __ensure(self, key, default):

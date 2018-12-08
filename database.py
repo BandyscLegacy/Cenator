@@ -23,11 +23,12 @@ class CustomEncoder(json.JSONEncoder):
          return {'__{}__'.format(o.__class__.__name__): o.__dict__}
 
 class Database(object):
-    def __init__(self):
-        if not os.path.exists('../database.json'):
+    def __init__(self, database_path):
+        self.database_path = database_path
+        if not os.path.exists(database_path):
             self.data = {}
         else:
-            self.data = json.load(open("../database.json"), object_hook=decode_object)
+            self.data = json.load(open(database_path), object_hook=decode_object)
 
         if not 'products' in self.data:
             self.data['products'] = {}
@@ -58,5 +59,5 @@ class Database(object):
         self.save()
 
     def save(self):
-        with open('../database.json', 'w') as outfile:
+        with open(self.database_path, 'w') as outfile:
             json.dump(self.data, outfile, indent=True, cls=CustomEncoder)
