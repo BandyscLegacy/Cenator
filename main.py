@@ -65,6 +65,7 @@ prods += komp.fetch_products(settings.search_tag, requester)
 old_prods : List[Product] = database.products()
 
 tags = settings.search_tag.lower().split(' ')
+exclude_tags = settings.exclude.lower().split(' ')
 
 for prod in prods:
 
@@ -73,9 +74,17 @@ for prod in prods:
         if not tag in prod.Name.lower():
             all=False
     
+    noneWrong=True
+    for tag in exclude_tags:
+        if tag in prod.Name.lower():
+            noneWrong = False
+
     if not all:
         if args.verbose:
             print("Not all tags in " + prod.Name+ ". Ignoring")
+    elif not noneWrong:
+        if args.verbose:
+            print("Invalid tags in " + prod.Name + ". Ignoring")
     else:
         oldProd : Optional[Product] = database.product(prod.Id)
         if oldProd is None:

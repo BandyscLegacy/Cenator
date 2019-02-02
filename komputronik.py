@@ -18,7 +18,7 @@ class KomputronikStripper(object):
             url = atag["href"]
             title = atag.string.strip()
             uid = idtag.string.strip()
-            price = float(pricetag.string.strip().replace(u"\xa0", "").replace(" ", "").replace(u"zł", ""))
+            price = float(pricetag.string.strip().replace(u"\xa0", "").replace(" ", "").replace(u"zł", "").replace(",", "."))
 
             prod = Product(uid, url, title, price, "Komputronik")
             prods.append(prod)
