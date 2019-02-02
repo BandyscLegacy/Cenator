@@ -106,8 +106,8 @@ for prod in prods:
 
                 msg = "TANIEJ o " + str(int(discount)) + "%: " + prod.Name + " za " + str(prod.Price) + "(" + str(oldProd.Price) + ") na " + prod.Source
                 if prod.Price <= settings.notify_below or discount >= settings.discount_to_notify:
-                    send_sms(msg)
-                print(msg)
+                    send_sms(msg.encode('utf-8').strip())
+                print(msg.encode('utf-8').strip())
                 
                 database.add_price(prod, int(time.time()))
             elif oldProd.Price < prod.Price:
