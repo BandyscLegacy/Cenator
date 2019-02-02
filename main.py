@@ -2,6 +2,7 @@ from typing import List, Dict, Optional
 from moreler import MoreleStripper
 from xkomer import XKomStripper
 from komputronik import KomputronikStripper
+from proline import ProlineStripper
 from requester import HtmlRequest
 from database import Database
 from sms import SMS
@@ -16,7 +17,7 @@ requester = HtmlRequest()
 moreler = MoreleStripper()
 xkomer = XKomStripper()
 komp = KomputronikStripper()
-
+proline = ProlineStripper()
 
 parser = argparse.ArgumentParser(description='Read prices from xkom, morele, komputronik!')
 parser.add_argument('-d', '--database', dest='database_path', action='store', default="database.json")
@@ -61,6 +62,7 @@ def send_sms(msg):
 prods = moreler.fetch_products(settings.search_tag, requester)
 prods += xkomer.fetch_products(settings.search_tag, requester)
 prods += komp.fetch_products(settings.search_tag, requester)
+prods += proline.fetch_products(settings.search_tag, requester)
 
 old_prods : List[Product] = database.products()
 
