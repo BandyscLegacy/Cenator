@@ -69,16 +69,20 @@ old_prods : List[Product] = database.products()
 tags = settings.search_tag.lower().split(' ')
 exclude_tags = settings.exclude.lower().split(' ')
 
+if args.verbose:
+    print("Tags: " + str(tags))
+    print("Exclude tags: " + str(exclude_tags))
+
 for prod in prods:
 
     all=True
     for tag in tags:
-        if not tag in prod.Name.lower():
+        if len(tag) > 0 and not tag in prod.Name.lower():
             all=False
     
     noneWrong=True
     for tag in exclude_tags:
-        if tag in prod.Name.lower():
+        if len(tag) > 0 and tag in prod.Name.lower():
             noneWrong = False
 
     if not all:
