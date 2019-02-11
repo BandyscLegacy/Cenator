@@ -43,7 +43,10 @@ class Database(object):
 
     def add_price(self, prod : Product, timestamp: int):
         self.__products()[prod.Id].Price = prod.Price
-        self.__products()[prod.Id].History.append({"time": timestamp, "price": prod.Price})
+        p = {"time": timestamp, "price": prod.Price}
+        if prod.DiscountPrice:
+            p["discount"] = True
+        self.__products()[prod.Id].History.append(p)
         self.save()
 
     def __products(self) -> Dict[str, Product]:
@@ -54,7 +57,13 @@ class Database(object):
             self.data['products'] = {}
         
         self.data['products'][product.Id] = product
-        self.data['products'][product.Id].History.append({"time": timestamp, "price": product.Price})
+
+
+        p = {"time": timestamp, "price": product.Price}
+        if product.DiscountPrice:
+            p["discount"] = True
+
+        self.data['products'][product.Id].History.append(p)
 
         self.save()
 
